@@ -18,7 +18,9 @@
                 <button mat-icon-button color="primary" (click)="editCategory(element)">
                     <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button color="accent"><mat-icon>clear</mat-icon></button>
+                <button mat-icon-button color="accent" (click)="deleteCategory(element)">
+                    <mat-icon>clear</mat-icon>
+                </button>
             </mat-cell>
         </ng-container>
 
