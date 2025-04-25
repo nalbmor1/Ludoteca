@@ -45,4 +45,14 @@ export class CategoryListComponent implements OnInit{
         this.ngOnInit();
       });    
     } 
+
+    editCategory(category: Category) {
+      const dialogRef = this.dialog.open(CategoryEditComponent, {
+        data: { category }
+      });
+  
+      dialogRef.afterClosed().subscribe(result => {
+        this.ngOnInit();
+      });
+    }
 }

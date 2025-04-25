@@ -19,11 +19,12 @@ export class CategoryEditComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<CategoryEditComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: {category : Category},
         private categoryService: CategoryService
     ) {}
 
     ngOnInit(): void {
-        this.category = new Category();
+      this.category = this.data.category ? Object.assign({}, this.data.category) : new Category();
     }
 
     onSave() {
