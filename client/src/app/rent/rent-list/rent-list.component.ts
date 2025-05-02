@@ -11,11 +11,18 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { Game } from '../../game/model/Game';
+import { Client } from '../../client/model/Client';
+import { GameService } from '../../game/game.service';
+import { ClientService } from '../../client/client.service';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
     selector: 'app-rent-list',
     standalone: true,
-    imports: [MatButtonModule, MatIconModule, MatTableModule, CommonModule, MatPaginator],
+    imports: [MatButtonModule, MatIconModule, MatTableModule, CommonModule, MatPaginator, MatInputModule, FormsModule, MatSelectModule],
     templateUrl: './rent-list.component.html',
     styleUrl: './rent-list.component.scss',
 })
@@ -24,12 +31,29 @@ export class RentListComponent implements OnInit {
     pageSize: number = 5;
     totalElements: number = 0;
 
+    games: Game[];
+    clients: Client[];
+    filterGame: Game;
+    filterClient: Client;
+
     dataSource = new MatTableDataSource<Rent>();
     displayedColumns: string[] = ['id', 'game', 'client', 'startDate', 'endDate', 'action'];
 
-    constructor(private rentService: RentService, public dialog: MatDialog) {}
+    constructor(private rentService: RentService, public dialog: MatDialog, private gameService: GameService, private clientService: ClientService) {}
 
     ngOnInit(): void {
+        this.loadPage();
+        this.gameService.getGames().subscribe((games) => (this.games = games));
+        this.clientService.getClients().subscribe((clients) => (this.clients = clients));
+    }
+
+    onCleanFilter(): void {
+        this.filterGame = null;
+        this.filterClient = null;
+        this.onSearch();
+    }
+
+    onSearch(): void {
         this.loadPage();
     }
 
@@ -50,7 +74,11 @@ export class RentListComponent implements OnInit {
             pageable.pageNumber = event.pageIndex;
         }
 
-        this.rentService.getRents(pageable).subscribe((data) => {
+        const gameId = this.filterGame != null ? this.filterGame.id : null;
+        const clientId = this.filterClient != null ? this.filterClient.id : null;
+
+
+        this.rentService.getRents(pageable, gameId, clientId).subscribe((data) => {
             this.dataSource.data = data.content;
             this.pageNumber = data.pageable.pageNumber;
             this.pageSize = data.pageable.pageSize;
