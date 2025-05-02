@@ -19,7 +19,8 @@ import { GameService } from '../../game/game.service';
 import { ClientService } from '../../client/client.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_NATIVE_DATE_FORMATS, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 @Component({
     selector: 'app-rent-list',
@@ -27,6 +28,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     imports: [MatButtonModule, MatIconModule, MatTableModule, CommonModule, MatPaginator, MatInputModule, FormsModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
     templateUrl: './rent-list.component.html',
     styleUrl: './rent-list.component.scss',
+    providers: [ {provide: DateAdapter, useClass: NativeDateAdapter}, {provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS}, { provide: MAT_DATE_LOCALE, useValue: 'en-GB' } ],
 })
 export class RentListComponent implements OnInit {
     pageNumber: number = 0;
