@@ -18,11 +18,13 @@ import { Client } from '../../client/model/Client';
 import { GameService } from '../../game/game.service';
 import { ClientService } from '../../client/client.service';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
     selector: 'app-rent-list',
     standalone: true,
-    imports: [MatButtonModule, MatIconModule, MatTableModule, CommonModule, MatPaginator, MatInputModule, FormsModule, MatSelectModule],
+    imports: [MatButtonModule, MatIconModule, MatTableModule, CommonModule, MatPaginator, MatInputModule, FormsModule, MatSelectModule, MatDatepickerModule, MatNativeDateModule],
     templateUrl: './rent-list.component.html',
     styleUrl: './rent-list.component.scss',
 })
@@ -35,6 +37,7 @@ export class RentListComponent implements OnInit {
     clients: Client[];
     filterGame: Game;
     filterClient: Client;
+    filterDate: Date;
 
     dataSource = new MatTableDataSource<Rent>();
     displayedColumns: string[] = ['id', 'game', 'client', 'startDate', 'endDate', 'action'];
@@ -50,6 +53,7 @@ export class RentListComponent implements OnInit {
     onCleanFilter(): void {
         this.filterGame = null;
         this.filterClient = null;
+        this.filterDate = null;
         this.onSearch();
     }
 
@@ -76,9 +80,9 @@ export class RentListComponent implements OnInit {
 
         const gameId = this.filterGame != null ? this.filterGame.id : null;
         const clientId = this.filterClient != null ? this.filterClient.id : null;
+        const selectedDate = this.filterDate ? this.filterDate.toISOString().split('T')[0] : null;
 
-
-        this.rentService.getRents(pageable, gameId, clientId).subscribe((data) => {
+        this.rentService.getRents(pageable, gameId, clientId, selectedDate).subscribe((data) => {
             this.dataSource.data = data.content;
             this.pageNumber = data.pageable.pageNumber;
             this.pageSize = data.pageable.pageSize;
