@@ -31,6 +31,24 @@ export class RentEditComponent implements OnInit {
     }
 
     onSave() {
+        const startDate = this.rent.startDate ? new Date(this.rent.startDate) : null;
+        const endDate = this.rent.endDate ? new Date(this.rent.endDate) : null;
+
+        if (startDate && endDate) {
+            // Validar que la fecha de fin no sea anterior a la fecha de inicio
+            if (startDate > endDate) {
+                alert('La fecha de fin no puede ser anterior a la fecha de inicio.');
+                return;
+            }
+    
+            // Validar que el rango no exceda los 14 días
+            const diffInDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+            if (diffInDays > 14) {
+                alert('El préstamo no puede exceder los 14 días.');
+                return;
+            }
+        }
+        
         this.rentService.saveRent(this.rent).subscribe(() => {
             this.dialogRef.close();
         });
