@@ -22,4 +22,4 @@ INSERT INTO client(name) VALUES ('Luís Gonzalez');
 
 INSERT INTO rent(startdate, enddate, game_id, client_id) VALUES ('2025-02-10', '2025-02-15', 1, 2);
 INSERT INTO rent(startdate, enddate, game_id, client_id) VALUES ('2025-03-11', '2025-03-20', 3, 1);
-INSERT INTO rent(startdate, enddate, game_id, client_id) VALUES ('2025-04-01', '2025-04-20', 4, 3);
+INSERT INTO rent(startdate, enddate, game_id, client_id) VALUES ('2025-04-01', '2025-04-05', 4, 3);
