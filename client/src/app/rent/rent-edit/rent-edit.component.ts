@@ -47,6 +47,9 @@ export class RentEditComponent implements OnInit {
                 alert('El préstamo no puede exceder los 14 días.');
                 return;
             }
+
+            this.rent.startDate = this.formatDateToLocal(startDate) as any;
+            this.rent.endDate = this.formatDateToLocal(endDate) as any;
         }
         
         this.rentService.saveRent(this.rent).subscribe(() => {
@@ -56,5 +59,12 @@ export class RentEditComponent implements OnInit {
 
     onClose() {
         this.dialogRef.close();
+    }
+
+    private formatDateToLocal(date: Date): string {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 }
