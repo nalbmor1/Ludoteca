@@ -68,7 +68,7 @@ export class RentEditComponent implements OnInit {
     onSave() {
         const startDate = this.rent.startDate ? new Date(this.rent.startDate) : null;
         const endDate = this.rent.endDate ? new Date(this.rent.endDate) : null;
-
+    
         if (startDate && endDate) {
             // Validar que la fecha de fin no sea anterior a la fecha de inicio
             if (startDate > endDate) {
@@ -82,11 +82,63 @@ export class RentEditComponent implements OnInit {
                 alert('El préstamo no puede exceder los 14 días.');
                 return;
             }
-
-            this.rent.startDate = this.formatDateToLocal(startDate) as any;
-            this.rent.endDate = this.formatDateToLocal(endDate) as any;
+    
+            // Validar las reglas de negocio
+            const startDateStr = this.formatDateToLocal(startDate);
+            const endDateStr = this.formatDateToLocal(endDate);
+    
+            // Validar que el juego no esté prestado a otro cliente en el rango de fechas
+            this.rentService.getRents({
+                pageNumber: 0, pageSize: 100,
+                sort: []
+            }, this.rent.game.id, undefined, startDateStr).subscribe((gameRentsPage) => {
+                const gameRents = gameRentsPage.content;
+                const isGameRented = gameRents.some(rent => {
+                    const rentStart = new Date(rent.startDate);
+                    const rentEnd = new Date(rent.endDate);
+                    return (
+                        (startDate >= rentStart && startDate <= rentEnd) || // Fecha de inicio en conflicto
+                        (endDate >= rentStart && endDate <= rentEnd) ||     // Fecha de fin en conflicto
+                        (startDate <= rentStart && endDate >= rentEnd)      // Rango completo en conflicto
+                    ) && rent.client.id !== this.rent.client.id; // Otro cliente
+                });
+    
+                if (isGameRented) {
+                    alert('El juego ya está prestado a otro cliente en el rango de fechas seleccionado.');
+                    return;
+                }
+    
+                // Validar que el cliente no tenga más de 2 juegos prestados en el rango de fechas
+                this.rentService.getRents({
+                    pageNumber: 0, pageSize: 100,
+                    sort: []
+                }, undefined, this.rent.client.id, startDateStr).subscribe((clientRentsPage) => {
+                    const clientRents = clientRentsPage.content;
+                    const dateCounts: { [date: string]: number } = {};
+    
+                    clientRents.forEach(rent => {
+                        const rentStart = new Date(rent.startDate);
+                        const rentEnd = new Date(rent.endDate);
+                        for (let d = new Date(rentStart); d <= rentEnd; d.setDate(d.getDate() + 1)) {
+                            const dateStr = this.formatDateToLocal(d);
+                            dateCounts[dateStr] = (dateCounts[dateStr] || 0) + 1;
+                        }
+                    });
+    
+                    const exceedsLimit = Object.values(dateCounts).some(count => count >= 2);
+                    if (exceedsLimit) {
+                        alert('El cliente no puede tener más de 2 juegos prestados en el mismo día.');
+                        return;
+                    }
+    
+                    // Si pasa todas las validaciones, guardar el préstamo
+                    this.saveRent();
+                });
+            });
         }
-        
+    }
+    
+    private saveRent(): void {
         this.rentService.saveRent(this.rent).subscribe(() => {
             this.dialogRef.close();
         });
