@@ -8,26 +8,61 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MAT_NATIVE_DATE_FORMATS, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
+import { Client } from '../../client/model/Client';
+import { Game } from '../../game/model/Game';
+import { GameService } from '../../game/game.service';
+import { ClientService } from '../../client/client.service';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
     selector: 'app-rent-edit',
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule],
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule, MatSelectModule],
     templateUrl: './rent-edit.component.html',
     styleUrl: './rent-edit.component.scss',
     providers: [ {provide: DateAdapter, useClass: NativeDateAdapter}, {provide: MAT_DATE_FORMATS, useValue: MAT_NATIVE_DATE_FORMATS}, { provide: MAT_DATE_LOCALE, useValue: 'en-GB' } ],
 })
 export class RentEditComponent implements OnInit {
     rent: Rent;
+    clients: Client[];
+    games: Game[];
 
     constructor(
         public dialogRef: MatDialogRef<RentEditComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        private rentService: RentService
+        private rentService: RentService,
+        private gameService: GameService,
+        private clientService: ClientService,
     ) {}
 
     ngOnInit(): void {
         this.rent = this.data.rent ? Object.assign({}, this.data.rent) : new Rent();
+
+        this.clientService.getClients().subscribe((clients) => {
+            this.clients = clients;
+
+            if (this.rent.client != null) {
+                const clientFilter: Client[] = clients.filter(
+                    (client) => client.id == this.data.rent.client.id
+                );
+                if (clientFilter != null) {
+                    this.rent.client = clientFilter[0];
+                }
+            }
+        });
+
+        this.gameService.getGames().subscribe((games) => {
+            this.games = games;
+
+            if (this.rent.game != null) {
+                const gameFilter: Game[] = games.filter(
+                    (game) => game.id == this.data.rent.game.id
+                );
+                if (gameFilter != null) {
+                    this.rent.game = gameFilter[0];
+                }
+            }
+        });
     }
 
     onSave() {

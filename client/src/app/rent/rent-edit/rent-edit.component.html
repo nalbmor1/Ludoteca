@@ -12,14 +12,22 @@
         </mat-form-field>
 
         <mat-form-field>
-            <mat-label>Nombre cliente</mat-label>
-            <input type="text" matInput placeholder="Nombre del cliente" [(ngModel)]="rent.client.name" name="client" required>
+            <mat-label>Cliente</mat-label>
+            <mat-select disableRipple [(ngModel)]="rent.client" name="client" required>
+                @for (client of clients; track client.id) {
+                    <mat-option [value]="client">{{client.name}}</mat-option>
+                }
+            </mat-select>
             <mat-error>El cliente no puede estar vacío</mat-error>
         </mat-form-field>
 
         <mat-form-field>
-            <mat-label>Nombre juego</mat-label>
-            <input type="text" matInput placeholder="Nombre del juego" [(ngModel)]="rent.game.title" name="game" required>
+            <mat-label>Juego</mat-label>
+            <mat-select disableRipple [(ngModel)]="rent.game" name="game" required>
+                @for (game of games; track game.id) {
+                    <mat-option [value]="game">{{game.title}}</mat-option>
+                }
+            </mat-select>
             <mat-error>El juego no puede estar vacío</mat-error>
         </mat-form-field>
 
