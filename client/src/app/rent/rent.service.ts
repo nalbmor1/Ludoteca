@@ -3,8 +3,8 @@ import { Observable, of } from 'rxjs';
 import { Pageable } from '../core/model/page/Pageable';
 import { Rent } from './model/Rent';
 import { RentPage } from './model/RentPage';
-import { RENT_DATA } from './model/mock-rent';
 import { HttpClient } from '@angular/common/http';
+import { forkJoin, map } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -38,5 +38,18 @@ export class RentService {
 
     deleteRent(idRent: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${idRent}`);
+    }
+
+    getRentsForRange(pageable: Pageable, gameId: number, startDate: string, endDate: string) {
+        return this.getRents(pageable, gameId).pipe(
+            map(page => {
+                return page.content.filter(rent => {
+                    const rentStart = new Date(rent.startDate);
+                    const rentEnd = new Date(rent.endDate);
+                    // Solapan si:
+                    return new Date(startDate) <= rentEnd && new Date(endDate) >= rentStart;
+                });
+            })
+        );
     }
 }

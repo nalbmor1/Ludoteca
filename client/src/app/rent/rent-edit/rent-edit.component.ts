@@ -87,26 +87,21 @@ export class RentEditComponent implements OnInit {
             const startDateStr = this.formatDateToLocal(startDate);
             const endDateStr = this.formatDateToLocal(endDate);
     
-            // Validar que el juego no esté prestado a otro cliente en el rango de fechas
-            this.rentService.getRents({
-                pageNumber: 0, pageSize: 100,
-                sort: []
-            }, this.rent.game.id, undefined, startDateStr).subscribe((gameRentsPage) => {
-                const gameRents = gameRentsPage.content;
-                const isGameRented = gameRents.some(rent => {
-                    const rentStart = new Date(rent.startDate);
-                    const rentEnd = new Date(rent.endDate);
-                    return (
-                        (startDate >= rentStart && startDate <= rentEnd) || // Fecha de inicio en conflicto
-                        (endDate >= rentStart && endDate <= rentEnd) ||     // Fecha de fin en conflicto
-                        (startDate <= rentStart && endDate >= rentEnd)      // Rango completo en conflicto
-                    ) && rent.client.id !== this.rent.client.id; // Otro cliente
-                });
-    
-                if (isGameRented) {
-                    alert('El juego ya está prestado a otro cliente en el rango de fechas seleccionado.');
-                    return;
-                }
+            const pageable = { pageNumber: 0, pageSize: 100, sort: [] };
+            this.rentService.getRentsForRange(pageable, this.rent.game.id, startDateStr, endDateStr)
+                .subscribe((gameRents) => {
+                    const isGameRented = gameRents.some(rent => {
+                        const rentStart = new Date(rent.startDate);
+                        const rentEnd = new Date(rent.endDate);
+                        return (
+                            startDate <= rentEnd && endDate >= rentStart
+                        ) && rent.client.id !== this.rent.client.id;
+                    });
+
+                    if (isGameRented) {
+                        alert('El juego ya está prestado a otro cliente en el rango de fechas seleccionado.');
+                        return;
+                    }
     
                 // Validar que el cliente no tenga más de 2 juegos prestados en el rango de fechas
                 this.rentService.getRents({
