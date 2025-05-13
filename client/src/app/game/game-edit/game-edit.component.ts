@@ -11,11 +11,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { NoWhitespaceDirective } from '../../core/validators/no-whitespace.directive';
 
 @Component({
     selector: 'app-game-edit',
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule ],
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule, NoWhitespaceDirective],
     templateUrl: './game-edit.component.html',
     styleUrl: './game-edit.component.scss',
 })

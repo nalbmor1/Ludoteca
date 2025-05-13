@@ -6,11 +6,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { NoWhitespaceDirective } from '../../core/validators/no-whitespace.directive';
 
 @Component({
     selector: 'app-client-edit',
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule ],
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, NoWhitespaceDirective],
     templateUrl: './client-edit.component.html',
     styleUrl: './client-edit.component.scss'
 })

@@ -13,13 +13,13 @@
 
         <mat-form-field>
             <mat-label>Nombre</mat-label>
-            <input type="text" matInput placeholder="Nombre del autor" [(ngModel)]="author.name" name="name" required>
+            <input type="text" matInput placeholder="Nombre del autor" [(ngModel)]="author.name" name="name" required appNoWhitespace>
             <mat-error>El nombre no puede estar vacío</mat-error>
         </mat-form-field>
 
         <mat-form-field>
             <mat-label>Nacionalidad</mat-label>
-            <input type="text" matInput placeholder="Nacionalidad del autor" [(ngModel)]="author.nationality" name="nationality" required>
+            <input type="text" matInput placeholder="Nacionalidad del autor" [(ngModel)]="author.nationality" name="nationality" required appNoWhitespace>
             <mat-error>La nacionalidad no puede estar vacía</mat-error>
         </mat-form-field>
     </form>
