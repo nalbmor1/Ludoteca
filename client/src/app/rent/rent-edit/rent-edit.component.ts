@@ -139,6 +139,10 @@ export class RentEditComponent implements OnInit {
     }
     
     private saveRent(): void {
+
+        this.rent.startDate = this.formatDateToLocal(new Date(this.rent.startDate)) as any;
+        this.rent.endDate = this.formatDateToLocal(new Date(this.rent.endDate)) as any;
+        
         this.rentService.saveRent(this.rent).subscribe(() => {
             this.dialogRef.close();
         });
