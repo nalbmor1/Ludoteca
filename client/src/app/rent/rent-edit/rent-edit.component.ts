@@ -83,7 +83,6 @@ export class RentEditComponent implements OnInit {
                 return;
             }
     
-            // Validar las reglas de negocio
             const startDateStr = this.formatDateToLocal(startDate);
             const endDateStr = this.formatDateToLocal(endDate);
     

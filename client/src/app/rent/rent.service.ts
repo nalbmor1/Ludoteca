@@ -46,7 +46,7 @@ export class RentService {
                 return page.content.filter(rent => {
                     const rentStart = new Date(rent.startDate);
                     const rentEnd = new Date(rent.endDate);
-                    // Solapan si:
+                    
                     return new Date(startDate) <= rentEnd && new Date(endDate) >= rentStart;
                 });
             })
