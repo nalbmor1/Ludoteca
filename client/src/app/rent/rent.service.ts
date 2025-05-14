@@ -40,8 +40,8 @@ export class RentService {
         return this.http.delete<void>(`${this.baseUrl}/${idRent}`);
     }
 
-    getRentsForRange(pageable: Pageable, gameId: number, startDate: string, endDate: string) {
-        return this.getRents(pageable, gameId).pipe(
+    getRentsForRange(pageable: Pageable, startDate: string, endDate: string, gameId?: number, clientId?: number) {
+        return this.getRents(pageable, gameId, clientId).pipe(
             map(page => {
                 return page.content.filter(rent => {
                     const rentStart = new Date(rent.startDate);

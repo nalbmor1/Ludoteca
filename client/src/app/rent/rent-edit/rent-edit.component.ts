@@ -70,13 +70,12 @@ export class RentEditComponent implements OnInit {
         const endDate = this.rent.endDate ? new Date(this.rent.endDate) : null;
     
         if (startDate && endDate) {
-            // Validar que la fecha de fin no sea anterior a la fecha de inicio
+            
             if (startDate > endDate) {
                 alert('La fecha de fin no puede ser anterior a la fecha de inicio.');
                 return;
             }
     
-            // Validar que el rango no exceda los 14 días
             const diffInDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
             if (diffInDays > 14) {
                 alert('El préstamo no puede exceder los 14 días.');
@@ -87,7 +86,7 @@ export class RentEditComponent implements OnInit {
             const endDateStr = this.formatDateToLocal(endDate);
     
             const pageable = { pageNumber: 0, pageSize: 100, sort: [] };
-            this.rentService.getRentsForRange(pageable, this.rent.game.id, startDateStr, endDateStr)
+            this.rentService.getRentsForRange(pageable, startDateStr, endDateStr, this.rent.game.id)
                 .subscribe((gameRents) => {
                     const isGameRented = gameRents.some(rent => {
                         const rentStart = new Date(rent.startDate);
@@ -102,30 +101,24 @@ export class RentEditComponent implements OnInit {
                         return;
                     }
     
-                // Validar que el cliente no tenga más de 2 juegos prestados en el rango de fechas
-                this.rentService.getRents({
-                    pageNumber: 0, pageSize: 100,
-                    sort: []
-                }, undefined, this.rent.client.id, startDateStr).subscribe((clientRentsPage) => {
-                    const clientRents = clientRentsPage.content;
-                    const dateCounts: { [date: string]: number } = {};
-    
-                    clientRents.forEach(rent => {
+            this.rentService.getRentsForRange(pageable, startDateStr, endDateStr, undefined,this.rent.client.id)
+                .subscribe((clientRents) => {
+                    
+                    const otherRents = clientRents.filter(rent => rent.id !== this.rent.id);
+
+                    const isClientOverlapping = otherRents.some(rent => {
                         const rentStart = new Date(rent.startDate);
                         const rentEnd = new Date(rent.endDate);
-                        for (let d = new Date(rentStart); d <= rentEnd; d.setDate(d.getDate() + 1)) {
-                            const dateStr = this.formatDateToLocal(d);
-                            dateCounts[dateStr] = (dateCounts[dateStr] || 0) + 1;
-                        }
+                        return (
+                            startDate <= rentEnd && endDate >= rentStart
+                        );
                     });
-    
-                    const exceedsLimit = Object.values(dateCounts).some(count => count >= 2);
-                    if (exceedsLimit) {
-                        alert('El cliente no puede tener más de 2 juegos prestados en el mismo día.');
+
+                    if (isClientOverlapping) {
+                        alert('El cliente ya tiene otro juego prestado en el rango de fechas seleccionado.');
                         return;
                     }
     
-                    // Si pasa todas las validaciones, guardar el préstamo
                     this.saveRent();
                 });
             });
@@ -148,7 +141,7 @@ export class RentEditComponent implements OnInit {
 
     private formatDateToLocal(date: Date): string {
         const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses van de 0 a 11
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
