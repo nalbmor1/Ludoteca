@@ -41,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
      * {@inheritDoc}
      */
     @Override
-    public void save(Long id, CategoryDto dto) throws Exception {
+    public void save(Long id, CategoryDto dto) {
 
         Category category;
 

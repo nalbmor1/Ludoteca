@@ -35,7 +35,7 @@ public interface AuthorService {
      * @param id PK de la entidad
      * @param dto datos de la entidad
      */
-    void save(Long id, AuthorDto dto) throws Exception;
+    void save(Long id, AuthorDto dto);
 
     /**
      * Método para crear o actualizar un {@link Author}

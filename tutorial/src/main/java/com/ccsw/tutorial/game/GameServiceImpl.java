@@ -55,6 +55,14 @@ public class GameServiceImpl implements GameService {
     @Override
     public void save(Long id, GameDto dto) {
 
+        String title = dto.getTitle();
+        String age = dto.getAge();
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("El título no puede ser vacío");
+        } else if (age == null || age.trim().isEmpty()) {
+            throw new IllegalArgumentException("La edad no puede ser vacía");
+        }
+        
         Game game;
 
         if (id == null) {

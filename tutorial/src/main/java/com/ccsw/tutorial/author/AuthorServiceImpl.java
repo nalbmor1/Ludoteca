@@ -44,7 +44,7 @@ public class AuthorServiceImpl implements AuthorService {
      * {@inheritDoc}
      */
     @Override
-    public void save(Long id, AuthorDto data) throws Exception {
+    public void save(Long id, AuthorDto data) {
 
         String name = data.getName();
         if (name == null || name.trim().isEmpty()) {
