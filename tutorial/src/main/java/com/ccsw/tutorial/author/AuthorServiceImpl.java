@@ -44,7 +44,12 @@ public class AuthorServiceImpl implements AuthorService {
      * {@inheritDoc}
      */
     @Override
-    public void save(Long id, AuthorDto data) {
+    public void save(Long id, AuthorDto data) throws Exception {
+
+        String name = data.getName();
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede ser vacío");
+        }
 
         Author author;
 
