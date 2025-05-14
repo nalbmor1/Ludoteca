@@ -32,7 +32,7 @@ public interface CategoryService {
      * @param id PK de la entidad
      * @param dto datos de la entidad
      */
-    void save(Long id, CategoryDto dto);
+    void save(Long id, CategoryDto dto) throws Exception;
 
     /**
      * Método para borrar una {@link Category}

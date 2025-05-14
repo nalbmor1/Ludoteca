@@ -49,7 +49,7 @@ public class CategoryController {
      */
     @Operation(summary = "Save or Update", description = "Method that saves or updates a Category")
     @RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
-    public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody CategoryDto dto) {
+    public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody CategoryDto dto) throws Exception {
 
         this.categoryService.save(id, dto);
     }

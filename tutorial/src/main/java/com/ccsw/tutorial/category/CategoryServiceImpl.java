@@ -41,19 +41,28 @@ public class CategoryServiceImpl implements CategoryService {
      * {@inheritDoc}
      */
     @Override
-    public void save(Long id, CategoryDto dto) {
+    public void save(Long id, CategoryDto dto) throws Exception {
 
         Category category;
 
-        if (id == null) {
-            category = new Category();
-        } else {
-            category = this.get(id);
+        try {
+            String name = dto.getName();
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("El nombre no puede ser vacío");
+            }
+
+            if (id == null) {
+                category = new Category();
+            } else {
+                category = this.get(id);
+            }
+
+            category.setName(name);
+
+            this.categoryRepository.save(category);
+        } catch (IllegalArgumentException e) {
+            throw e;
         }
-
-        category.setName(dto.getName());
-
-        this.categoryRepository.save(category);
     }
 
     /**
