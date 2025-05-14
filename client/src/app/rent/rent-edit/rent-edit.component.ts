@@ -106,16 +106,14 @@ export class RentEditComponent implements OnInit {
                     
                     const otherRents = clientRents.filter(rent => rent.id !== this.rent.id);
 
-                    const isClientOverlapping = otherRents.some(rent => {
+                    const overlappingCount = otherRents.filter(rent => {
                         const rentStart = new Date(rent.startDate);
                         const rentEnd = new Date(rent.endDate);
-                        return (
-                            startDate <= rentEnd && endDate >= rentStart
-                        );
-                    });
+                        return startDate <= rentEnd && endDate >= rentStart;
+                    }).length;
 
-                    if (isClientOverlapping) {
-                        alert('El cliente ya tiene otro juego prestado en el rango de fechas seleccionado.');
+                    if (overlappingCount >= 2) {
+                        alert('El cliente ya tiene dos juegos prestados en el rango de fechas seleccionado.');
                         return;
                     }
     
