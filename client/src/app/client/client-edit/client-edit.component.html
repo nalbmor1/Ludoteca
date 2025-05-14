@@ -5,7 +5,7 @@
         <h1>Crear cliente</h1>
     }
 
-    <form>
+    <form #clientForm="ngForm">
         <mat-form-field>
             <mat-label>Identificador</mat-label>
             <input type="text" matInput placeholder="Identificador" [(ngModel)]="client.id" name="id" disabled>
@@ -13,13 +13,13 @@
 
         <mat-form-field>
             <mat-label>Nombre</mat-label>
-            <input type="text" matInput placeholder="Nombre del cliente" [(ngModel)]="client.name" name="name" required>
+            <input type="text" matInput placeholder="Nombre del cliente" [(ngModel)]="client.name" name="name" required appNoWhitespace>
             <mat-error>El nombre no puede estar vacío</mat-error>
         </mat-form-field>
     </form>
 
     <div class="buttons">
         <button mat-stroked-button (click)="onClose()">Cerrar</button>
-        <button mat-flat-button color="primary" (click)="onSave()">Guardar</button>
+        <button mat-flat-button color="primary" (click)="onSave()" [disabled]="clientForm.invalid">Guardar</button>
     </div>
 </div>
