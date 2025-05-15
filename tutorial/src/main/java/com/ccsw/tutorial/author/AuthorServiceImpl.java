@@ -46,6 +46,11 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void save(Long id, AuthorDto data) {
 
+        String name = data.getName();
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede ser vacío");
+        }
+
         Author author;
 
         if (id == null) {

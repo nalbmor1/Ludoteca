@@ -71,6 +71,23 @@ public class RentServiceImpl implements RentService {
             throw new Exception("La fecha de fin no puede ser anterior a la fecha de inicio");
         }
 
+        long days = java.time.temporal.ChronoUnit.DAYS.between(rent.getStartDate(), rent.getEndDate());
+        if (days > 14) {
+            throw new Exception("El préstamo no puede ser mayor a 14 días");
+        }
+
+        boolean overlapping = rentRepository.existsByGameIdAndDateOverlap(rent.getGame().getId(), rent.getStartDate(), rent.getEndDate(), id);
+
+        if (overlapping) {
+            throw new Exception("El juego ya está prestado a otro cliente en esas fechas.");
+        }
+
+        long overlappingRentsByClient = rentRepository.countOverlappingRentsByClient(rent.getClient().getId(), rent.getStartDate(), rent.getEndDate(), id);
+
+        if (overlappingRentsByClient >= 2) {
+            throw new Exception("Un cliente no puede tener más de dos juegos prestados al mismo tiempo.");
+        }
+
         this.rentRepository.save(rent);
     }
 

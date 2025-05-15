@@ -45,13 +45,18 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category;
 
+        String name = dto.getName();
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede ser vacío");
+        }
+
         if (id == null) {
             category = new Category();
         } else {
             category = this.get(id);
         }
 
-        category.setName(dto.getName());
+        category.setName(name);
 
         this.categoryRepository.save(category);
     }

@@ -40,20 +40,26 @@ public class ClientServiceImpl implements ClientService {
     public void save(Long id, ClientDto dto) {
 
         Client client;
+
         try {
+            String name = dto.getName();
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("El nombre no puede ser vacío");
+            }
             if (id == null) {
                 client = new Client();
             } else {
                 client = this.get(id);
             }
 
-            client.setName(dto.getName());
+            client.setName(name);
 
             this.clientRepository.save(client);
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
             System.out.println("Ya existe un cliente con ese nombre");
         }
-
     }
 
     /**
