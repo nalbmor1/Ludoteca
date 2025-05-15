@@ -39,17 +39,4 @@ export class RentService {
     deleteRent(idRent: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${idRent}`);
     }
-
-    getRentsForRange(pageable: Pageable, startDate: string, endDate: string, gameId?: number, clientId?: number) {
-        return this.getRents(pageable, gameId, clientId).pipe(
-            map(page => {
-                return page.content.filter(rent => {
-                    const rentStart = new Date(rent.startDate);
-                    const rentEnd = new Date(rent.endDate);
-                    
-                    return new Date(startDate) <= rentEnd && new Date(endDate) >= rentStart;
-                });
-            })
-        );
-    }
 }
