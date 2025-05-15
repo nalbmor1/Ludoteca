@@ -76,6 +76,12 @@ public class RentServiceImpl implements RentService {
             throw new Exception("El préstamo no puede ser mayor a 14 días");
         }
 
+        boolean overlapping = rentRepository.existsByGameIdAndDateOverlap(rent.getGame().getId(), rent.getStartDate(), rent.getEndDate(), id);
+
+        if (overlapping) {
+            throw new Exception("El juego ya está prestado a otro cliente en esas fechas.");
+        }
+
         this.rentRepository.save(rent);
     }
 
