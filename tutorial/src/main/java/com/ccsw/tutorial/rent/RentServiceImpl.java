@@ -71,6 +71,11 @@ public class RentServiceImpl implements RentService {
             throw new Exception("La fecha de fin no puede ser anterior a la fecha de inicio");
         }
 
+        long days = java.time.temporal.ChronoUnit.DAYS.between(rent.getStartDate(), rent.getEndDate());
+        if (days > 14) {
+            throw new Exception("El préstamo no puede ser mayor a 14 días");
+        }
+
         this.rentRepository.save(rent);
     }
 
