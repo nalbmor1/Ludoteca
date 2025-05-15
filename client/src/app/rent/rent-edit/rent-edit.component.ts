@@ -82,54 +82,20 @@ export class RentEditComponent implements OnInit {
                 return;
             }
     
-            const startDateStr = this.formatDateToLocal(startDate);
-            const endDateStr = this.formatDateToLocal(endDate);
-    
-            const pageable = { pageNumber: 0, pageSize: 100, sort: [] };
-            this.rentService.getRentsForRange(pageable, startDateStr, endDateStr, this.rent.game.id)
-                .subscribe((gameRents) => {
-                    const isGameRented = gameRents.some(rent => {
-                        const rentStart = new Date(rent.startDate);
-                        const rentEnd = new Date(rent.endDate);
-                        return (
-                            startDate <= rentEnd && endDate >= rentStart
-                        ) && rent.client.id !== this.rent.client.id;
-                    });
-
-                    if (isGameRented) {
-                        alert('El juego ya está prestado a otro cliente en el rango de fechas seleccionado.');
-                        return;
-                    }
-    
-            this.rentService.getRentsForRange(pageable, startDateStr, endDateStr, undefined,this.rent.client.id)
-                .subscribe((clientRents) => {
-                    
-                    const otherRents = clientRents.filter(rent => rent.id !== this.rent.id);
-
-                    const overlappingCount = otherRents.filter(rent => {
-                        const rentStart = new Date(rent.startDate);
-                        const rentEnd = new Date(rent.endDate);
-                        return startDate <= rentEnd && endDate >= rentStart;
-                    }).length;
-
-                    if (overlappingCount >= 2) {
-                        alert('El cliente ya tiene dos juegos prestados en el rango de fechas seleccionado.');
-                        return;
-                    }
-    
-                    this.saveRent();
-                });
-            });
+            this.saveRent();
         }
     }
     
     private saveRent(): void {
-
         this.rent.startDate = this.formatDateToLocal(new Date(this.rent.startDate)) as any;
         this.rent.endDate = this.formatDateToLocal(new Date(this.rent.endDate)) as any;
-        
-        this.rentService.saveRent(this.rent).subscribe(() => {
-            this.dialogRef.close();
+
+        this.rentService.saveRent(this.rent).subscribe({
+            next: () => this.dialogRef.close(),
+            error: (error) => {
+                const backendMsg = error?.error?.message || error?.error || 'Error al guardar el préstamo.';
+                alert(backendMsg);
+            }
         });
     }
 
