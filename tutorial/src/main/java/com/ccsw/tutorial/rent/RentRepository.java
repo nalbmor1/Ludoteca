@@ -30,4 +30,7 @@ public interface RentRepository extends CrudRepository<Rent, Long>, JpaSpecifica
 
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Rent r " + "WHERE r.game.id = :gameId " + "AND r.id <> COALESCE(:rentId, 0) " + "AND r.startDate <= :endDate " + "AND r.endDate >= :startDate")
     boolean existsByGameIdAndDateOverlap(@Param("gameId") Long gameId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("rentId") Long rentId);
+
+    @Query("SELECT COUNT(r) FROM Rent r " + "WHERE r.client.id = :clientId " + "AND r.id <> COALESCE(:rentId, 0) " + "AND r.startDate <= :endDate " + "AND r.endDate >= :startDate")
+    long countOverlappingRentsByClient(@Param("clientId") Long clientId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("rentId") Long rentId);
 }

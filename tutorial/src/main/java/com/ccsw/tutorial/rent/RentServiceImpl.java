@@ -82,6 +82,12 @@ public class RentServiceImpl implements RentService {
             throw new Exception("El juego ya está prestado a otro cliente en esas fechas.");
         }
 
+        long overlappingRentsByClient = rentRepository.countOverlappingRentsByClient(rent.getClient().getId(), rent.getStartDate(), rent.getEndDate(), id);
+
+        if (overlappingRentsByClient >= 2) {
+            throw new Exception("Un cliente no puede tener más de dos juegos prestados al mismo tiempo.");
+        }
+
         this.rentRepository.save(rent);
     }
 
